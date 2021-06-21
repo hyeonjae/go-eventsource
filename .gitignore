@@ -1,0 +1,6 @@
+.env
+.idea
+zk-*
+data/
+cmd/consumer
+cmd/producer
