@@ -1,6 +1,10 @@
 package events
 
-import "time"
+import (
+	"bytes"
+	"encoding/gob"
+	"time"
+)
 
 type Event struct {
 	AggregateId string    `bson:"aggregate_id,omitempty"`
@@ -12,4 +16,22 @@ type Event struct {
 
 func (e Event) Type() string {
 	return e.EventType
+}
+
+func (e *Event) Encode() ([]byte, error) {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	if err := enc.Encode(e); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+func (e *Event) Length() int {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	if err := enc.Encode(e); err != nil {
+		return 0
+	}
+	return buf.Len()
 }

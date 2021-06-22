@@ -7,9 +7,11 @@ import (
 	eventsource "github.com/hyeonjae/go-eventsource"
 	"github.com/hyeonjae/go-eventsource/accounts"
 	"github.com/hyeonjae/go-eventsource/clients"
+	"github.com/hyeonjae/go-eventsource/datastore"
 	"github.com/hyeonjae/go-eventsource/eventbus"
 	"github.com/hyeonjae/go-eventsource/eventstore"
 	"github.com/hyeonjae/go-eventsource/http"
+	"github.com/hyeonjae/go-eventsource/kafka"
 	"go.uber.org/fx"
 )
 
@@ -22,6 +24,7 @@ func main() {
 	app := fx.New(
 		fx.Provide(
 			eventsource.NewConfig,
+			datastore.New,
 			eventbus.New,
 			eventstore.New,
 			clients.NewService,
@@ -31,6 +34,7 @@ func main() {
 		),
 		fx.Invoke(
 			http.Start,
+			kafka.Sink,
 		),
 		fx.StartTimeout(startTimeout),
 		fx.StopTimeout(stopTimeout),

@@ -24,6 +24,7 @@ func New(cfg *eventsource.Config) (*Kafka, error) {
 
 	var kafkaCfg = sarama.NewConfig()
 	kafkaCfg.Version = sarama.V2_2_0_0
+	kafkaCfg.Producer.Return.Successes = true
 	kafkaCfg.Producer.Compression = sarama.CompressionSnappy   // Compress messages
 	kafkaCfg.Producer.Flush.Frequency = 200 * time.Millisecond // Flush batches every 200ms
 	kafkaCfg.Net.DialTimeout = 300 * time.Millisecond
@@ -47,10 +48,10 @@ func New(cfg *eventsource.Config) (*Kafka, error) {
 	}, nil
 }
 
-func (k Kafka) Send(topic string, message []byte) (int32, int64, error) {
+func (k Kafka) Send(topic string, message sarama.Encoder) (int32, int64, error) {
 	msg := sarama.ProducerMessage{
 		Topic:     topic,
-		Value:     sarama.ByteEncoder(message),
+		Value:     message,
 		Timestamp: time.Now(),
 	}
 	return k.producer.SendMessage(&msg)

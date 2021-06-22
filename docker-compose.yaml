@@ -2,10 +2,13 @@ version: '3.7'
 services:
   eventsource-mysql:
     image: mysql:8.0
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+      - ./mysql-init.sql:/docker-entrypoint-initdb.d/1.sql:ro
     restart: always
     environment:
       - MYSQL_USER=dev
-      - MYSQL_PASSWORD=eventsource!@#
+      - MYSQL_PASSWORD=eventsource
       - MYSQL_ROOT_PASSWORD=admin
       - MYSQL_DATABASE=eventsource
     ports:
@@ -23,7 +26,7 @@ services:
     environment:
       KAFKA_ZOOKEEPER_CONNECT: eventsource-zookeeper:2181
       KAFKA_ADVERTISED_HOST_NAME: localhost
-      KAFKA_CREATE_TOPICS: local.stream.advertisement.event:1:1
+      KAFKA_CREATE_TOPICS: topic.clients:1:1
     depends_on:
       - eventsource-zookeeper
 

@@ -27,5 +27,5 @@ func Start(cr *clients.Resource, ar *accounts.Resource) {
 	accountRouter.GET("", ar.ListAccounts())
 	accountRouter.GET("/:id", ar.GetAccount())
 
-	e.Logger.Fatal(e.Start(":8080"))
+	go e.Start(":8080")
 }
